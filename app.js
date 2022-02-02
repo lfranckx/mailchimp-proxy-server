@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.post('/', jsonParser, (req, res, next) => {
     const { email_address } = req.body
+    console.log(req.body);
 
     if (!email_address) {
         return res.status(400).json({
@@ -55,7 +56,11 @@ app.post('/', jsonParser, (req, res, next) => {
         } else {
             if (response.statusCode === 200) {
                 res.status(200).json(body)
+                
             }
+
+            console.log('response', response);
+            console.log('body', body);
         }
     })
 })

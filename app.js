@@ -13,7 +13,9 @@ const ollinListId = process.env.OLLIN_LIST_ID;
 const bsharpApiKey = process.env.BSHARP_API_KEY;
 const bsharpDc = process.env.BSHARP_DC;
 const bsharpListId = process.env.BSHARP_LIST_ID;
-
+const lfxApiKey = process.env.LFX_API_KEY;
+const lfxDc = process.env.LFX_DC;
+const lfxListId = process.env.LFX_LIST_ID;
 
 const app = express();
 app.use(morgan('dev'));
@@ -102,6 +104,57 @@ app.post('/', jsonParser, (req, res, next) => {
             method: 'POST',
             headers: {
                 Authorization: `auth ${bsharpApiKey}`
+            },
+            body: payload
+        }
+    
+        request(options, (err, response, body) => {
+            if (err) {
+                res.status(500).json(err)
+            } else {
+                if (response.statusCode === 200) {
+                    res.status(200).json(body)
+                    
+                }
+
+                console.log('response', response);
+                console.log('body', body);
+            }
+        })
+    }
+
+    if (id=== 'lfxmedia') {
+        if (!email_address) {
+            return res.status(400).json({
+                error: `Missing email in request body`
+            })
+        }
+
+        if (!name) {
+            return res.status(400).json({
+                error: `Missing name in request body`
+            })
+        }
+
+        const data = {
+            members: [
+                {
+                    email_address,
+                    status: 'subscribed',
+                    merge_fields: {
+                        FNAME: name
+                    }
+                }
+            ]
+        }
+
+        const payload = JSON.stringify(data);
+
+        const options = {
+            url: `https://${lfxDc}.api.mailchimp.com/3.0/lists/${lfxListId}`,
+            method: 'POST',
+            headers: {
+                Authorization: `auth ${lfxApiKey}`
             },
             body: payload
         }
